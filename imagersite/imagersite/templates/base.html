@@ -1,17 +1,30 @@
 <!DOCTYPE html>
+
 {% load static %}
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="{% static "normalize.css" %}"
-  <title>Django Shopper Demo</title>
+  <link rel="stylesheet" href="{% static "normalize.css" %}">
+  <link rel="stylesheet" href="{% static "base.css" %}">
+  <link rel="stylesheet" href="{% static "layout.css" %}">
+  <link rel="stylesheet" href="{% static "modules.css" %}">
+  <title>Django Imgur Clone</title>
 </head>
 <body>
   <header>
-    <nav>
-      <ul>
+    <nav role="navigation">
+      <div id="menuToggle">
+        <input type="checkbox" />
+        <span></span>
+        <span></span>
+        <span></span>
+        <ul id="menu">
+        {% if user.is_authenticated %}
+        <li><p>{{ user.username }}</p></li>
+        {% endif %}
         <li><a href="{% url "home" %}">Home</a></li>
         {% if user.is_authenticated %}
         <li><a href="">Profile</a></li>
@@ -23,13 +36,15 @@
         {% if user.is_authenticated %}
         <li><a href="{% url "auth_logout" %}">Logout</a></li>
         {% endif %}
-      </ul>
+        </ul>
+      </div>
+      <h1>Imgur Clone</h1>
     </nav>
-    {% if user.is_authenticated %}
-    <h3>Welcome to the site, {{ user.username }}!</h3>
-    {% endif %}
   </header>
   <main>
+    {% if user.is_authenticated %}
+    <h3>Welcome to the site {{ user.username }}</h3>
+    {% endif %}
     {% block content %}
     <h3>No Content</h3>
     {% endblock content%}
