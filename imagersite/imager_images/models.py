@@ -27,7 +27,7 @@ class Album(models.Model):
 
 class Photo(models.Model):
     """Photo class for album photos"""
-    album = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='photos')
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='photos')
     image = ImageField(upload_to='images')
     title = models.CharField(max_length=180, default='Untitled')
     description = models.TextField(blank=True, null=True)
