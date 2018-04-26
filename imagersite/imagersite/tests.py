@@ -19,6 +19,7 @@ class ClientTests(TestCase):
 
 
 class ViewTests(TestCase):
+    """Class for unit testing views."""
     def test_get_home_page(self):
         """Test home page view returns 200 status code."""
         c = Client()
