@@ -1,8 +1,6 @@
 from django.test import Client
 from django.test import TestCase
 from django.urls import reverse_lazy
-from django.core import mail
-from urllib.parse import urlparse
 
 
 class ClientTests(TestCase):
