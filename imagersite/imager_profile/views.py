@@ -15,7 +15,12 @@ def profile_view(request, username=None):
 
     profile = get_object_or_404(ImagerProfile, user__username=username)
     albums = Album.objects.filter(user__username=username)
-    photos = Photo.objects.filter(album__user__username=username)
+    photos = Photo.objects.filter(user__username=username)
+    num_photos_public = len(Photo.objects.filter(user__username=username).filter(published='PUBLIC'))
+    num_albums_public = len(Album.objects.filter(user__username=username).filter(published='PUBLIC'))
+
+    num_photos_private = len(Photo.objects.filter(user__username=username).filter(published='PRIVATE'))
+    num_albums_private = len(Album.objects.filter(user__username=username).filter(published='PRIVATE'))
 
     if not owner:
         photos = Photo.objects.filter(published='PUBLIC')
@@ -24,7 +29,11 @@ def profile_view(request, username=None):
     context = {
         'profile': profile,
         'albums': albums,
-        'photos': photos
+        'photos': photos,
+        'num_albums_public': num_albums_public,
+        'num_photos_public': num_photos_public,
+        'num_albums_private': num_albums_private,
+        'num_photos_private': num_photos_private,
     }
 
     return render(request, 'profile/profile.html', context)
