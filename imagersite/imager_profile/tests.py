@@ -6,6 +6,7 @@ import factory
 
 
 class UserFactory(factory.django.DjangoModelFactory):
+    """Create a test user for writing tests"""
     class Meta:
         model = User
 
@@ -14,6 +15,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 class ProfileFactory(factory.django.DjangoModelFactory):
+    """Create instances of profiles"""
     class Meta:
         model = ImagerProfile
 
@@ -42,8 +44,10 @@ class ProfileFactory(factory.django.DjangoModelFactory):
 
 
 class ProfileUnitTest(TestCase):
+    """Create and test profiles"""
     @classmethod
     def setUpClass(cls):
+        """Setup instances of users for testing"""
         super(TestCase, cls)
         for _ in range(50):
             user = UserFactory.create()
@@ -55,9 +59,12 @@ class ProfileUnitTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        """Destroy users after test has run"""
         super(TestCase, cls)
         User.objects.all().delete()
 
     def test_user_can_see_its_profile(self):
+        """Test to see if first user has a profile"""
         one_user = User.objects.first()
+        # import pdb; pdb.set_trace()
         self.assertIsNotNone(one_user.profile)
