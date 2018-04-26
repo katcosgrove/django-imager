@@ -1,4 +1,4 @@
 Welcome to Imagersite, {{ user }}!
 
-To activate your account, lpease click the link below.
+To activate your account, please click the link below.
 http://{{site}}{% url 'registration_activate' activation_key=activation_key %}
