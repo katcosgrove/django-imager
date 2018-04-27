@@ -23,8 +23,6 @@
         <a href="{% url "settings" username=user.username %}" >{% trans "Edit Profile" %}</a>
         {% endif %}
     </section>
-<!--     Photos and albums go here -->
-<a href="{% url "library" %}">{% trans "Library" %}</a>
 </section>
 {% else %}
 <h1>{% trans "Please log into the site." %}</h1>
