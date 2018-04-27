@@ -14,28 +14,56 @@ class UserFactory(factory.django.DjangoModelFactory):
     email = factory.Faker('email')
 
 
-class ProfileFactory(factory.django.DjangoModelFactory):
-    """Create instances of profiles"""
-    class Meta:
-        model = ImagerProfile
+# class ProfileFactory(factory.django.DjangoModelFactory):
+#     """Create instances of profiles"""
+#     class Meta:
+#         model = ImagerProfile
 
-    bio = factory.Faker('text')
-    phone = factory.Faker('phone_number')
-    location = factory.Faker('city')
-    website = factory.Faker('url')
-    fee = factory.Faker('random_digit')
-    camera = factory.Faker('random_element', elements=[('DSLR', 'Digital Single Lens Reflex'),
+    # bio = factory.Faker('text')
+    # phone = factory.Faker('phone_number')
+    # location = factory.Faker('city')
+    # website = factory.Faker('url')
+    # fee = factory.Faker('random_digit')
+    # camera = factory.Faker('random_element', elements=[('DSLR', 'Digital Single Lens Reflex'),
+    #                        ('M', 'Mirrorless'),
+    #                        ('AC', 'Advanced Compact'),
+    #                        ('SLR', 'Single Lens Reflex')])
+
+    # services = factory.Faker('random_element', elements=[('weddings', 'Weddings'),
+    #                          ('headshots', 'HeadShots'),
+    #                          ('landscape', 'LandScape'),
+    #                          ('portraits', 'Portraits'),
+    #                          ('art', 'Art')])
+
+    # photostyles = factory.Faker('random_element', elements=[('blackandwhite', 'Black and White'),
+    #                             ('night', 'Night'),
+    #                             ('macro', 'Macro'),
+    #                             ('3d', '3D'),
+    #                             ('artistic', 'Artistic'),
+    #                             ('underwater', 'Underwater')])
+
+
+def populate_profile(user, **kwargs):
+    user.profile.bio = kwargs['bio'] if 'bio' in kwargs else factory.Faker('text')
+    user.profile.phone = kwargs['phone'] if 'phone' in kwargs else factory.Faker('phone_number')
+    user.profile.location = kwargs['location'] if 'location' in kwargs else factory.Faker('city')
+    user.profile.website = kwargs['website'] if 'website' in kwargs else factory.Faker('url')
+    user.profile.fee = kwargs['fee'] if 'fee' in kwargs else factory.Faker('random_digit')
+    user.profile.camera = kwargs['camera'] if 'camera' in kwargs else factory.Faker('random_element',
+                            elements=[('DSLR', 'Digital Single Lens Reflex'),
                            ('M', 'Mirrorless'),
                            ('AC', 'Advanced Compact'),
                            ('SLR', 'Single Lens Reflex')])
 
-    services = factory.Faker('random_element', elements=[('weddings', 'Weddings'),
+    user.profile.services = kwargs['services'] if 'services' in kwargs else factory.Faker('random_element',
+                             elements=[('weddings', 'Weddings'),
                              ('headshots', 'HeadShots'),
                              ('landscape', 'LandScape'),
                              ('portraits', 'Portraits'),
                              ('art', 'Art')])
 
-    photostyles = factory.Faker('random_element', elements=[('blackandwhite', 'Black and White'),
+    user.profile.photostyles = kwargs['photostyles'] if 'photostyles' in kwargs else factory.Faker('random_element',
+                                elements=[('blackandwhite', 'Black and White'),
                                 ('night', 'Night'),
                                 ('macro', 'Macro'),
                                 ('3d', '3D'),

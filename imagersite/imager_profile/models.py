@@ -1,11 +1,13 @@
 from django.db import models
 from multiselectfield import MultiSelectField
 from django.contrib.auth.models import User
+from django.dispatch import receiver
 
 # Create your models here.
 
 
 class ImagerProfile(models.Model):
+    """Class for creation of user profiles."""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
     bio = models.TextField(blank=True, null=True)
@@ -36,9 +38,18 @@ class ImagerProfile(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
+        """Return profile username."""
         return self.user.username
 
     @classmethod
     def active(cls):
         """Return class objects where is_active is True."""
         return cls.objects.filter(is_active=True)
+
+
+@receiver(models.signals.post_save, sender=User)
+def create_profile(sender, **kwargs):
+    """Create an accompanying profile when a user is created."""
+    if kwargs['created']:
+        profile = ImagerProfile(user=kwargs['instance'])
+        profile.save()

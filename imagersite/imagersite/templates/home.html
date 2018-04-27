@@ -3,5 +3,7 @@
 {% block content %}
 <h2>Welcome to the home page!</h2>
 <h3>You should register and give us your pictures bro</h3>
-<img src="{% static "birdcage.jpg" %}"
+
+<img src="{{ MEDIA_URL }}{{ image }}" width=400px/>
+
 {% endblock %}

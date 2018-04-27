@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{%  block content %}
+<h2 class="photos header">Photos</h2>
+{% for photo in photos %}
+    {% thumbnail photo.image "200x200" as im %}
+    <img src="{{ im.url }}" >
+    <a href="{% url "photo" photo_id=photo.id %}">link</a>
+{% endthumbnail %}
+{% endfor %}
+{% endblock content %}
