@@ -1,9 +1,12 @@
 from django.urls import path
-from .views import library_view
+from .views import library_view, photos_view, albums_view, photo_view
 
 
 urlpatterns = [
     path('', library_view, name='library'),
-    # path('<str:username>/', profile_view, name='named_profile'),
-    # path('settings/<str:username>', profile_view, name='settings'),  #The view is not correct here
+    path('photos/', photos_view, name='photos'),
+    path('photos/<str:photo_id>', photo_view, name='stuff'),
+    path('albums/', albums_view, name='albums'),
+    # path('albums/<str:album_id', album_view, name='album'),
+
 ]
