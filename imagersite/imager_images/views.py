@@ -6,6 +6,7 @@ from imager_profile.models import ImagerProfile
 
 
 def library_view(request, username=None):
+    """Display all public photos and albums."""
     owner = False
 
     if not username:
@@ -28,12 +29,11 @@ def library_view(request, username=None):
         'photos': photos,
     }
 
-    # import pdb; pdb.set_trace()
-
     return render(request, 'images/library.html', context)
 
 
 def photos_view(request, username=None):
+    """Display all photos for a particular user."""
     owner = False
 
     if not username:
@@ -42,7 +42,6 @@ def photos_view(request, username=None):
         if username == '':
             return redirect('home')
 
-    profile = get_object_or_404(ImagerProfile, user__username=username)
     photos = Photo.objects.filter(user__username=username)
 
     if not owner:
@@ -52,36 +51,22 @@ def photos_view(request, username=None):
         'photos': photos,
     }
 
-    # import pdb; pdb.set_trace()
-
     return render(request, 'images/photos.html', context)
 
 
-def photo_view(request, username=None, photo_id=None):
-    owner = False
+def photo_view(request, photo_id=None):
+    """Display details about a single photo."""
 
-    if not username:
-        username = request.user.get_username()
-        owner = True
-        if username == '':
-            return redirect('home')
-
-    profile = get_object_or_404(ImagerProfile, user__username=username)
-    photos = Photo.objects.filter(user__username=username).filter(id=photo_id)
-
-    if not owner:
-        photos = Photo.objects.filter(published='PUBLIC')
-
+    photo = Photo.objects.filter(id=photo_id)
+    # import pdb; pdb.set_trace()
     context = {
-        'photos': photos,
+        'photo': photo[0],
     }
-
-    # import pdb; pdb.set_trace()
-
-    return render(request, 'images/photos.html', context)
+    return render(request, 'images/image.html', context)
 
 
 def albums_view(request, username=None):
+    """Display all albums for a specific user."""
     owner = False
 
     if not username:
@@ -103,6 +88,7 @@ def albums_view(request, username=None):
 
 
 def album_view(request, album_id=None):
+    """Display details about a particular album."""
 
     photos = Photo.objects.filter(albums=album_id).filter(published='PUBLIC')
 

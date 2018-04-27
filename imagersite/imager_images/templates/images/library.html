@@ -1,17 +1,25 @@
 {% extends 'base.html' %}
 {% load thumbnail %}
 {%  block content %}
-    <h2 class="albums header">Albums</h2>
+<h2 class="albums header">Albums</h2>
+<div class="gridContainer">
 {% for album in albums %}
+<div class="gridItem">
 {% thumbnail album.cover.image "200x200" as im %}
-<img src="{{ im.url }}" max-height=400px max-width=400px>
+<img src="{{ im.url }}">
 {% endthumbnail %}
+</div>
 {% endfor %}
+</div>
 </b>
 <h2 class="photos header">Photos</h2>
+<div class="gridContainer">
 {% for photo in photos %}
+<div class="gridItem">
 {% thumbnail photo.image "200x200" as im %}
-    <img src="{{ im.url }}" max-height=400px max-width=400px>
+    <img src="{{ im.url }}">
 {% endthumbnail %}
+</div>
 {% endfor %}
+</div>
 {% endblock content %}
