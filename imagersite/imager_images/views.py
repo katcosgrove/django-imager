@@ -58,7 +58,6 @@ def photo_view(request, photo_id=None):
     """Display details about a single photo."""
 
     photo = Photo.objects.filter(id=photo_id)
-    # import pdb; pdb.set_trace()
     context = {
         'photo': photo[0],
     }
@@ -87,10 +86,20 @@ def albums_view(request, username=None):
     return render(request, 'images/albums.html', context)
 
 
-def album_view(request, album_id=None):
+def album_view(request, username=None, album_id=None):
     """Display details about a particular album."""
+    owner = False
+
+    if not username:
+        username = request.user.get_username()
+        owner = True
+        if username == '':
+            return redirect('home')
 
     photos = Photo.objects.filter(albums=album_id).filter(published='PUBLIC')
+
+    if not owner:
+        photos = Photo.objects.filter(albums=album_id).filter(published='PUBLIC')
 
     context = {
         'photos': photos,

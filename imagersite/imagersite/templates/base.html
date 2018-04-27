@@ -23,7 +23,7 @@
         <span></span>
         <ul id="menu">
         {% if user.is_authenticated %}
-        <li><p>{{ user.username }}</p></li>
+        <li><a href="{% url "profile" %}">{{ user.username }}</a></li>
         {% endif %}
         <li><a href="{% url "home" %}">Home</a></li>
         {% if user.is_authenticated %}
@@ -43,7 +43,7 @@
   </header>
   <main>
     {% if user.is_authenticated %}
-    <h3>Welcome to the site {{ user.username }}</h3>
+    <h3>Welcome to the site <a href="{% url "profile" %}">{{ user.username }}</a></h3>
     {% endif %}
     {% block content %}
     <h3>No Content</h3>
