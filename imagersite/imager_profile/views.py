@@ -5,6 +5,11 @@ from imager_images.models import Album, Photo
 
 
 def profile_view(request, username=None):
+    """
+    Handle profile view for any user.
+
+    If you are not the owner of the profile, display only public photos and albums.
+    """
     owner = False
 
     if not username:
