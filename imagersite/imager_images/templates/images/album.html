@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{%  block content %}
+<h2 class="album header">Album</h2>
+{% for photo in photos %}
+<img src="{{ photo.image.url }}" max-height=400px max-width=400px>
+{% endfor %}
+{% endblock content %}

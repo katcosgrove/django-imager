@@ -90,7 +90,6 @@ def albums_view(request, username=None):
         if username == '':
             return redirect('home')
 
-    profile = get_object_or_404(ImagerProfile, user__username=username)
     albums = Album.objects.filter(user__username=username)
 
     if not owner:
@@ -100,6 +99,15 @@ def albums_view(request, username=None):
         'albums': albums,
     }
 
-    # import pdb; pdb.set_trace()
-
     return render(request, 'images/albums.html', context)
+
+
+def album_view(request, album_id=None):
+
+    photos = Photo.objects.filter(albums=album_id).filter(published='PUBLIC')
+
+    context = {
+        'photos': photos,
+    }
+
+    return render(request, 'images/album.html', context)

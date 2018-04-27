@@ -31,6 +31,7 @@ class Photo(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
     image = ImageField(upload_to='images')
+    albums = models.ManyToManyField(Album)
     title = models.CharField(max_length=180, default='Untitled')
     description = models.TextField(blank=True, null=True)
     date_uploaded = models.DateField(auto_now_add=True)

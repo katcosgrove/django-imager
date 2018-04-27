@@ -4,6 +4,6 @@
 <h2 class="photos header">Photos</h2>
 {% for photo in photos %}
     <img src="{{ photo.image.url }}" max-height=400px max-width=400px>
-    <a href="{% url "stuff" photo_id=photo.id %}">link</a>
+    <a href="{% url "photo" photo_id=photo.id %}">link</a>
 {% endfor %}
 {% endblock content %}
