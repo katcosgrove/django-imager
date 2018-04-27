@@ -2,8 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from imager_images.models import Album, Photo
 from imager_profile.models import ImagerProfile
 
-# Create your views here.
-
 
 def library_view(request, username=None):
     """Display all public photos and albums."""
@@ -33,7 +31,12 @@ def library_view(request, username=None):
 
 
 def photos_view(request, username=None):
-    """Display all photos for a particular user."""
+    """
+    Display all photos for a particular user.
+
+    If you are that user, display all photos. 
+    If you are not that user, display only public photos.
+    """
     owner = False
 
     if not username:
@@ -55,8 +58,11 @@ def photos_view(request, username=None):
 
 
 def photo_view(request, photo_id=None):
-    """Display details about a single photo."""
+    """
+    Display details about a single photo.
 
+    Includes metadata, handled on front-end.
+    """
     photo = Photo.objects.filter(id=photo_id)
     context = {
         'photo': photo[0],
@@ -65,7 +71,12 @@ def photo_view(request, photo_id=None):
 
 
 def albums_view(request, username=None):
-    """Display all albums for a specific user."""
+    """
+    Display all albums for a specific user.
+
+    If you are that user, display all albums.
+    If not, display only public albums.
+    """
     owner = False
 
     if not username:
@@ -87,7 +98,12 @@ def albums_view(request, username=None):
 
 
 def album_view(request, username=None, album_id=None):
-    """Display details about a particular album."""
+    """
+    Display details about a particular album.
+
+    If you are that user, display all photos in that album.
+    If not, display only public photos in that album.
+    """
     owner = False
 
     if not username:
