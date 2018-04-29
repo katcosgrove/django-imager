@@ -1,5 +1,6 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse_lazy
 from .models import Album, Photo
 from imager_profile.models import User, ImagerProfile
 import factory
@@ -117,3 +118,19 @@ class PhotoUnitTest(TestCase):
         """Test if an photo has a title"""
         one_photo = Photo
         self.assertIsNotNone(one_photo.title)
+
+
+class ImagesViews(TestCase):
+
+    def test_get_library_page_status_code(self):
+        """Test library page view returns 302 status code."""
+        c = Client()
+        response = c.get(reverse_lazy('library'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_get_library_page_templates(self):
+        """Test library page view templates."""
+        c = Client()
+        response = c.get(reverse_lazy('library'), follow=True)
+        self.assertEqual(response.templates[0].name, 'home.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
