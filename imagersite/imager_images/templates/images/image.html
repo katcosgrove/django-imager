@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 
 {%  block content %}
-<h2 class="photos header">Single Photo</h2>
-    <img src="{{ photo.image.url }}" height=400px>
-    <p>Title: {{ photo.title }}</p>
+<div class="singleImage container">
+    <h3>Title: {{ photo.title }}</h3>
     <p>Description: {{ photo.description }}</p>
+    <img src="{{ photo.image.url }}" width=400px>
     <p>Date Uploaded: {{ photo.date_uploaded }}</p>
+</div>
 {% endblock content %}

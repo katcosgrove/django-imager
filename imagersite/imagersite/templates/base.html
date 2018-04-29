@@ -30,8 +30,8 @@
         <li><a href="{% url "profile" %}">Profile</a></li>
         <li><a href="{% url "library" %}">Library</a></li>
         {% else %}
-        <li><a href="{% url "registration_register" %}">Signup</a></li>
-        <li><a href="{% url "auth_login" %}">Signin</a></li>
+        <li><a href="{% url "registration_register" %}">Sign Up</a></li>
+        <li><a href="{% url "auth_login" %}">Sign In</a></li>
         {% endif %}
         {% if user.is_authenticated %}
         <li><a href="{% url "auth_logout" %}">Logout</a></li>
@@ -39,19 +39,24 @@
         </ul>
       </div>
       <h1>Imgur Clone</h1>
+      <ul class="rightNav">
+        {% if user.is_authenticated %}
+        <li><a href="{% url "profile" %}">profile</a></li>
+        <li><a href="{% url "library" %}">library</a></li>
+        {% else %}
+        <li><a href="{% url "registration_register" %}">sign Up</a></li>
+        <li><a href="{% url "auth_login" %}">sign In</a></li>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <li><a href="{% url "auth_logout" %}">logout</a></li>
+        {% endif %}
+      </ul>
     </nav>
   </header>
   <main>
-    {% if user.is_authenticated %}
-    <h3>Welcome to the site <a href="{% url "profile" %}">{{ user.username }}</a></h3>
-    {% endif %}
     {% block content %}
     <h3>No Content</h3>
     {% endblock content%}
   </main>
-  <footer>
-
-  </footer>
-
 </body>
 </html>
