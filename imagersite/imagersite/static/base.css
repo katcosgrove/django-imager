@@ -2,13 +2,15 @@
 
 a {
   text-decoration: none;
+  color: white;
 }
 
-p {
+* {
     font-family: 'Roboto';
+    text-align: center;
 }
 
-h1, h2, h3 {
-  font-family: 'Pacifico';
-  font-style: italic;
+body {
+    background-color: rgb(35, 35, 35);
+    color: white;
 }

@@ -2,9 +2,13 @@
 {% load thumbnail %}
 {%  block content %}
 <h2 class="photos header">Photos</h2>
+<div class="gridContainer">
 {% for photo in photos %}
+    <div class="gridItem">
     {% thumbnail photo.image "200x200" as im %}
-    <a href="{% url "photo" photo_id=photo.id %}"><img src="{{ im.url }}" ></a>
+    <a href="{% url "photo" photo_id=photo.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
 {% endthumbnail %}
+    </div>
 {% endfor %}
+</div>
 {% endblock content %}
