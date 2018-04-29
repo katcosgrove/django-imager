@@ -7,7 +7,7 @@ def home_view(request):
     try:
         random_image = Photo.objects.filter(published='PUBLIC').order_by('?')[0]
         random_image = random_image.image
-    except AttributeError:
+        return render(request, 'home.html', {'image': random_image.url})
+    except IndexError:
         random_image = '/static/birdcage.jpg'
-
-    return render(request, 'home.html', {'image': random_image.url})
+        return render(request, 'home.html', {'image': random_image})
