@@ -3,10 +3,10 @@
 {%  block content %}
 <h2 class="album header">Album</h2>
 <div class="gridContainer">
-{% for photo in photos %}
+{% for photo in album.photos.all %}
 <div class="gridItem">
 {% thumbnail photo.image "200x200" as im %}
-    <img src="{{ im.url }}" >
+    <a href="{% url "photo" photo_id=photo.id %}"><img src="{{ im.url }}" ></a>
 {% endthumbnail %}
 </div>
 {% endfor %}

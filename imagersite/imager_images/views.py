@@ -34,7 +34,7 @@ def photos_view(request, username=None):
     """
     Display all photos for a particular user.
 
-    If you are that user, display all photos. 
+    If you are that user, display all photos.
     If you are not that user, display only public photos.
     """
     owner = False
@@ -112,13 +112,13 @@ def album_view(request, username=None, album_id=None):
         if username == '':
             return redirect('home')
 
-    photos = Photo.objects.filter(albums=album_id).filter(published='PUBLIC')
+    album = Album.objects.filter(id=album_id).first()
 
     if not owner:
-        photos = Photo.objects.filter(albums=album_id).filter(published='PUBLIC')
+        album = Album.objects.filter(id=album_id).filter(published='PUBLIC')
 
     context = {
-        'photos': photos,
+        'album': album,
     }
-
+    # import pdb; pdb.set_trace()
     return render(request, 'images/album.html', context)
