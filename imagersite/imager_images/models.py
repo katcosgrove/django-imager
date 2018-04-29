@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 from sorl.thumbnail import ImageField
 
 
-class Album(models.Model):
-    """Create album objects."""
+class Photo(models.Model):
+    """Photo class for album photos."""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
-    cover = models.ForeignKey('Photo', on_delete=models.CASCADE, related_name='+', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
+    image = ImageField(upload_to='images')
     title = models.CharField(max_length=180, default='Untitled')
     description = models.TextField(blank=True, null=True)
     date_uploaded = models.DateField(auto_now_add=True)
@@ -26,12 +26,12 @@ class Album(models.Model):
         return '{}'.format(self.title)
 
 
-class Photo(models.Model):
-    """Photo class for album photos."""
+class Album(models.Model):
+    """Create album objects."""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
-    image = ImageField(upload_to='images')
-    albums = models.ManyToManyField(Album)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
+    cover = models.ForeignKey('Photo', on_delete=models.CASCADE, related_name='+', null=True, blank=True)
+    photos = models.ManyToManyField(Photo, related_name='album')
     title = models.CharField(max_length=180, default='Untitled')
     description = models.TextField(blank=True, null=True)
     date_uploaded = models.DateField(auto_now_add=True)
