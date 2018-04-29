@@ -10,7 +10,7 @@ fake = faker.Faker()
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    """creates a test user for writing tests"""
+    """Create a test user for writing tests"""
     class Meta:
         model = User
 
