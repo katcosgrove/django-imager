@@ -31,7 +31,7 @@ class PhotoFactory(factory.django.DjangoModelFactory):
         model = Photo
 
     image = SimpleUploadedFile('test.jpg', b'file_content', content_type='image/jpg')
-    title = factory.Faker('text')
+    title = factory.Faker('word')
     description = factory.Faker('text')
     date_uploaded = factory.Faker('date')
     date_modified = factory.Faker('date')
@@ -183,57 +183,123 @@ class PhotoAlbumUnitTest(TestCase):
         self.assertIs(three_album.photo, two_album.photo)
 
 
-class ImagesViews(TestCase):
-    """Test image views"""
+class TestImagesViews(TestCase):
+    """Class to test image views."""
 
     @classmethod
-    def setUpUser(cls):
-        """Create a single album instance."""
-        super(ImagesViewsTestCase, cls).setup()
-        self.client = Client()
-        user = User(username='watdude',
-                    email='watdude@wat.up')
-        user.set_password('helloworld')
-        user.id = 1
+    def setUp(self):
+        user = User(username='testing',
+                    email='testing@testing.com')
         user.save()
         self.user = user
+        self.client = Client()
+
+        photo = PhotoFactory.build()
+        photo.user_id = self.user.id
+        photo.save()
+        self.photo = photo
+
+        album = AlbumFactory.build()
+        album.user_id = self.user.id
+        album.save()
+        self.album = album
 
     @classmethod
-    def tearDownUser(self):
-        """Destroy user instance."""
-        super(ImagesViewsTestCase, self)
+    def tearDown(self):
+        """Teardown class for test users."""
         User.objects.all().delete()
+        super(TestCase, self)
 
-    # this isn't working, need help
+    def test_200_status_on_authenticated_request_to_library(self):
+        """Check for 200 status code."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse_lazy('library'))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
 
-    # def test_get_library_page_status_code(self):
-    #     """Test for 302 redirect status code"""
+    def test_get_library_page_404_status_code(self):
+        """Test library page view returns 404 status code."""
+        self.client.force_login(self.user)
+        response = self.client.get('images/libary/', follow=True)
+        self.assertEqual(response.status_code, 404)
 
-    #     self.client.force_login(self.user)
-    #     response = self.client.get('/images/library/', follow=True)
-    #     # import pdb; pdb.set_trace()
-    #     self.assertEqual(response.status_code, 200)
+    def test_get_library_page_templates(self):
+        """Test library page view templates."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse_lazy('library'), follow=True)
+        self.assertEqual(response.templates[0].name, 'images/library.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
 
-    #  def test_getLibrary_page_status_code(self):
-    #     """Test """
+    def test_200_status_on_authenticated_request_to_albums(self):
+        """Check for 200 status code."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse_lazy('albums'))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
 
-    #     response = self.client.post('/login/'), 
-    #         {'username': 'watdude',  
-    #         'password': 'helloworld'},)
-    #     # self.client.force_login(self, User)
-    #     response = self.client.get(reverse_lazy('library'))
-    #     import pdb; pdb.set_trace()
-    #     self.assertContains(response, comment_text, 1)
-    
-    # def test_get_library_page_status_code(self):
-    #     """Test library page view returns 302 status code."""
-    #     c = Client()
-    #     response = c.get(reverse_lazy('library'))
-    #     self.assertEqual(response.status_code, 302)
+    def test_get_albums_page_404_status_code(self):
+        """Test library page view returns 404 status code."""
+        self.client.force_login(self.user)
+        response = self.client.get('images/alum', follow=True)
+        self.assertEqual(response.status_code, 404)
 
-    # def test_get_library_page_templates(self):
-    #     """Test library page view templates."""
-    #     c = Client()
-    #     response = c.get(reverse_lazy('library'), follow=True)
-    #     self.assertEqual(response.templates[0].name, 'home.html')
-    #     self.assertEqual(response.templates[1].name, 'base.html')
+    def test_get_album_page_templates(self):
+        """Test library page view templates."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse_lazy('albums'), follow=True)
+        self.assertEqual(response.templates[0].name, 'images/albums.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
+
+    def test_200_status_on_authenticated_request_to_photos(self):
+        """Check for 200 status code."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse_lazy('photos'))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_photos_page_404_status_code(self):
+        """Test library page view returns 404 status code."""
+        self.client.force_login(self.user)
+        response = self.client.get('images/photogs/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_photos_page_templates(self):
+        """Test library page view templates."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse_lazy('photos'), follow=True)
+        self.assertEqual(response.templates[0].name, 'images/photos.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
+
+    def test_200_status_on_authenticated_request_to_image(self):
+        """Test 200 status code on authenticated request to single image."""
+        self.client.force_login(self.user)
+        response = self.client.get('/images/photos/{}'.format(self.photo.id))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+
+    def test_302_status_on_unauthenticated_request_to_image(self):
+        """Test 200 status code on unauthenticated request to single image."""
+        response = self.client.get('/images/photos/{}'.format(self.photo.id))
+        self.assertEqual(response.status_code, 200)
+
+    def test_404_status_on_bad_request_to_product(self):
+        """Test bad photo page view returns 404 status code."""
+        response = self.client.get('/images/photos/does_not_exist')
+        self.assertEqual(response.status_code, 404)
+
+    def test_200_status_on_authenticated_request_to_album(self):
+        """Test 200 status code on authenticated request to single image."""
+        self.client.force_login(self.user)
+        response = self.client.get('/images/albums/{}'.format(self.album.id))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+
+    def test_302_status_on_unauthenticated_request_to_album(self):
+        """Test 200 status code on unauthenticated request to single image."""
+        response = self.client.get('/images/albums/{}'.format(self.album.id))
+        self.assertEqual(response.status_code, 302)
+
+    def test_404_status_on_bad_request_to_album(self):
+        """Test bad photo page view returns 404 status code."""
+        response = self.client.get('/images/albums/does_not_exist')
+        self.assertEqual(response.status_code, 404)

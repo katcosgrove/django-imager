@@ -1,5 +1,6 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from .models import User
+from django.urls import reverse_lazy
 import factory
 from random import choice
 
@@ -72,11 +73,6 @@ class ProfileUnitTest(TestCase):
         one_user = User.objects.first()
         self.assertIsNotNone(one_user.profile)
 
-    def test_user_profile_id(self):
-        """Test user profile has content."""
-        one_user = User.objects.first()
-        self.assertEqual(one_user.profile.id, 1)
-
     def test_user_profile_bio(self):
         """Test user profile has content."""
         one_user = User.objects.first()
@@ -140,30 +136,39 @@ class ProfileUnitTest(TestCase):
         self.assertTrue(one_user, None)
 
 
-# class ProfileViews(TestCase):
+class TestProfileViews(TestCase):
+    """Class to test profile views."""
 
-    # def test_get_profile_page_status_code(self):
-    #     """Test profile page view returns 302 status code."""
-    #     one_user = User.objects.first()
-    #     self.client.force_login(one_user)
-    #     c = Client()
-    #     response = c.get(reverse_lazy('profile'))
-    #     self.assertEqual(response.status_code, 302)
+    @classmethod
+    def setUp(self):
+        user = User(username='testing',
+                    email='testing@testing.com')
+        user.save()
+        self.user = user
+        self.client = Client()
 
-    # def test_get_profile_page_templates(self):
-    #     """Test profile page view templates."""
-    #     c = Client()
-    #     response = c.get(reverse_lazy('profile'), follow=True)
-    #     self.assertEqual(response.templates[0].name, 'home.html')
-    #     self.assertEqual(response.templates[1].name, 'base.html')
+    @classmethod
+    def tearDown(self):
+        """Teardown class for test users."""
+        User.objects.all().delete()
+        super(TestCase, self)
 
-    # this test needs some work 
-    
-    # def test_client_login_redirect_to_home(self):
-    #     """Test user login redirects to homepage."""
-    #     one_user = User.objects.first()
-    #     self.client.force_login(one_user)
-    #     response = self.client.get('/accounts/login/', follow=True)
-    #     self.assertEquals(response.status_code, 200)
-    #     self.assertEqual(response.templates[0].name, 'home.html')
-    #     self.assertEqual(response.templates[1].name, 'base.html')
+    def test_200_status_on_authenticated_request_to_profile(self):
+        """Check for 200 status code."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse_lazy('profile'))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_profile_page_404_status_code(self):
+        """Test profile page view returns 404 status code."""
+        self.client.force_login(self.user)
+        response = self.client.get('profilo/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_profile_page_templates(self):
+        """Test profile page view templates."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse_lazy('profile'), follow=True)
+        self.assertEqual(response.templates[0].name, 'profile/profile.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
