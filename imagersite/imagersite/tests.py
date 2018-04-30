@@ -122,5 +122,19 @@ class ViewTests(TestCase):
         self.assertEqual(response.templates[0].name, 'registration/activation_complete.html')
         self.assertEqual(response.templates[1].name, 'base.html')
 
+    def test_user_not_logged_in_302_redirected_status_code(self):
+        """Test users not logged in redirected to the homepage."""
+        c = Client()
+        response = c.get(reverse_lazy('library'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_user_not_logged_in_redirected_to_home(self):
+        """Test users not logged in redirected to the homepage."""
+        c = Client()
+        response = c.get(reverse_lazy('library'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.templates[0].name, 'home.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
+
 
 
