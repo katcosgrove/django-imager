@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse_lazy
 from .models import Album, Photo
-from imager_profile.models import User, ImagerProfile
+from imager_profile.models import User
 import factory
 import faker
 
@@ -11,8 +11,11 @@ fake = faker.Faker()
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    """Create a test user for writing tests"""
+    """Create a test user for writing tests."""
+
     class Meta:
+        """Meta class for a user."""
+
         model = User
 
     username = factory.Faker('user_name')
@@ -20,40 +23,44 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 class PhotoFactory(factory.django.DjangoModelFactory):
-    """Create instances of Photos"""
+    """Create instances of Photos."""
+
     class Meta:
+        """Meta class for a photo."""
+
         model = Photo
 
     image = SimpleUploadedFile('test.jpg', b'file_content', content_type='image/jpg')
-    title = factory.Faker('text') 
-    description = factory.Faker('text') 
-    date_uploaded = factory.Faker('date') 
-    date_modified = factory.Faker('date') 
-    date_published = factory.Faker('date') 
+    title = factory.Faker('text')
+    description = factory.Faker('text')
+    date_uploaded = factory.Faker('date')
+    date_modified = factory.Faker('date')
+    date_published = factory.Faker('date')
     published = factory.Faker('random_element', elements=[
         ('PRIVATE', 'Private'),
         ('SHARED', 'Shared'),
         ('PUBLIC', 'Public'),
-        ]
-    )
+    ])
 
 
 class AlbumFactory(factory.django.DjangoModelFactory):
-    """Create instances of Albums"""
+    """Create instances of Albums."""
+
     class Meta:
+        """Meta class for an album."""
+
         model = Album
 
     title = fake.text(170)
-    description = factory.Faker('text') 
-    date_uploaded = factory.Faker('date') 
-    date_modified = factory.Faker('date') 
-    date_published = factory.Faker('date') 
+    description = factory.Faker('text')
+    date_uploaded = factory.Faker('date')
+    date_modified = factory.Faker('date')
+    date_published = factory.Faker('date')
     published = factory.Faker('random_element', elements=[
         ('PRIVATE', 'Private'),
         ('SHARED', 'Shared'),
         ('PUBLIC', 'Public'),
-        ]
-    )
+    ])
 
 
 class PhotoAlbumUnitTest(TestCase):
@@ -64,7 +71,7 @@ class PhotoAlbumUnitTest(TestCase):
         """Create a single album instance."""
         super(TestCase, self)
         user = User.build(username='watdude',
-            email='watdude@wat.up')
+                          email='watdude@wat.up')
         user.set_password('helloworld')
         user.user_id = 1
         user.save()
@@ -184,9 +191,8 @@ class ImagesViews(TestCase):
         """Create a single album instance."""
         super(ImagesViewsTestCase, cls).setup()
         self.client = Client()
-        
         user = User(username='watdude',
-            email='watdude@wat.up')
+                    email='watdude@wat.up')
         user.set_password('helloworld')
         user.id = 1
         user.save()
@@ -197,8 +203,6 @@ class ImagesViews(TestCase):
         """Destroy user instance."""
         super(ImagesViewsTestCase, self)
         User.objects.all().delete()
-
-
 
     # this isn't working, need help
 

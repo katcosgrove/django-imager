@@ -8,12 +8,12 @@ class ClientTests(TestCase):
 
     def test_user_registration(self):
         """Test for user registration."""
-        response = self.client.post(reverse_lazy('registration_register'), 
-            {'username': 'watdude',  
-            'email': 'watdude@wat.up', 
-            'password1': 'helloworld', 
-            'password2': 'helloworld'}, 
-            follow=True)
+        response = self.client.post(reverse_lazy('registration_register'),
+                                    {'username': 'watdude',
+                                     'email': 'watdude@wat.up',
+                                     'password1': 'helloworld',
+                                     'password2': 'helloworld'},
+                                    follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.templates[0].name, 'registration/registration_complete.html')
         self.assertEqual(response.templates[1].name, 'base.html')
@@ -30,7 +30,7 @@ class ClientTests(TestCase):
         response = c.post('/accounts/logout/')
         self.assertEqual(response.status_code, 200)
 
-    def test_client_logout_status_code(self):
+    def test_client_logout_templates(self):
         """Test a client can log out."""
         c = Client()
         response = c.post('/accounts/logout/')
@@ -40,6 +40,7 @@ class ClientTests(TestCase):
 
 class ViewTests(TestCase):
     """Class for unit testing views."""
+
     def test_get_home_page_status_codes(self):
         """Test home page view returns 200 status code."""
         c = Client()
@@ -47,7 +48,7 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_get_home_page_templates(self):
-        """Test home page view templates used"""
+        """Test home page view templates used."""
         c = Client()
         response = c.get(reverse_lazy('home'))
         self.assertEqual(response.templates[0].name, 'home.html')
@@ -60,7 +61,7 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_get_registration_page_templates(self):
-        """Test registration page view templates used"""
+        """Test registration page view templates used."""
         c = Client()
         response = c.get(reverse_lazy('registration_register'))
         self.assertEqual(response.templates[0].name, 'registration/registration_form.html')
@@ -92,7 +93,7 @@ class ViewTests(TestCase):
         response = c.get(reverse_lazy('auth_logout'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.templates[0].name, 'registration/logout.html')
-        self.assertEqual(response.templates[1].name, 'base.html') 
+        self.assertEqual(response.templates[1].name, 'base.html')
 
     def test_get_registration_complete_page_status_code(self):
         """Test registration complete page view returns 200 status code."""
@@ -135,6 +136,3 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.templates[0].name, 'home.html')
         self.assertEqual(response.templates[1].name, 'base.html')
-
-
-

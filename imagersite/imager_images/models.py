@@ -23,6 +23,7 @@ class Photo(models.Model):
     )
 
     def __str__(self):
+        """Return the title of the photo."""
         return '{}'.format(self.title)
 
 
@@ -47,4 +48,5 @@ class Album(models.Model):
     )
 
     def __str__(self):
+        """Return the title of the album."""
         return '{}'.format(self.title)

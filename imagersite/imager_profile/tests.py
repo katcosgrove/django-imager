@@ -1,13 +1,15 @@
-from django.test import TestCase, Client
-from .models import ImagerProfile, User
+from django.test import TestCase
+from .models import User
 import factory
 from random import choice
-from django.urls import reverse_lazy
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    """Create a test user for writing tests"""
+    """Create a test user for writing tests."""
+
     class Meta:
+        """Meta class for a user."""
+
         model = User
 
     username = factory.Faker('user_name')
@@ -15,6 +17,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 def populate_profile(user, **kwargs):
+    """Populate profile with data."""
     user.profile.bio = kwargs['bio'] if 'bio' in kwargs else factory.Faker('text')
     user.profile.phone = kwargs['phone'] if 'phone' in kwargs else factory.Faker('phone_number')
     user.profile.location = kwargs['location'] if 'location' in kwargs else factory.Faker('city')
@@ -23,24 +26,25 @@ def populate_profile(user, **kwargs):
     user.profile.camera = kwargs['camera'] if 'camera' in kwargs else choice(['DSLR', 'M', 'AC', 'SLR',])
     user.profile.services = kwargs['services'] if 'services' in kwargs else choice(
         ['weddings',
-        'headshots', 
-        'landscape',
-        'portraits',
-        'art',])
+         'headshots',
+         'landscape',
+         'portraits',
+         'art', ])
     user.profile.photostyles = kwargs['photostyles'] if 'photostyles' in kwargs else choice(
-        ['blackandwhite', 
-        'night', 
-        'macro', 
-        '3d', 
-        'artistic', 
-        'underwater'])
+        ['blackandwhite',
+         'night',
+         'macro',
+         '3d',
+         'artistic',
+         'underwater'])
 
 
 class ProfileUnitTest(TestCase):
-    """Create and test profiles"""
+    """Create and test profiles."""
+
     @classmethod
     def setUpClass(cls):
-        """Setup instances of users for testing"""
+        """Set up instances of users for testing."""
         super(TestCase, cls)
         for _ in range(50):
             user = UserFactory.create()
@@ -52,7 +56,7 @@ class ProfileUnitTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Destroy users after test has run"""
+        """Destroy users after test has run."""
         super(TestCase, cls)
         User.objects.all().delete()
 
@@ -122,7 +126,7 @@ class ProfileUnitTest(TestCase):
         self.assertTrue(one_user.profile.is_active)
 
     def test_user_can_be_deactivated(self):
-        """Deactivate user"""
+        """Deactivate user."""
         one_user = User.objects.first()
         self.assertIsNotNone(one_user.profile.active)
         self.assertTrue(one_user.profile.is_active)
@@ -130,7 +134,7 @@ class ProfileUnitTest(TestCase):
         self.assertFalse(one_user.profile.is_active)
 
     def test_user_can_be_deleted(self):
-        """Delete user"""
+        """Delete user."""
         one_user = User.objects.first()
         one_user.delete()
         self.assertTrue(one_user, None)
@@ -163,10 +167,3 @@ class ProfileUnitTest(TestCase):
     #     self.assertEquals(response.status_code, 200)
     #     self.assertEqual(response.templates[0].name, 'home.html')
     #     self.assertEqual(response.templates[1].name, 'base.html')
-
-
-
-
-    
-
-
