@@ -120,5 +120,5 @@ def album_view(request, username=None, album_id=None):
     context = {
         'album': album,
     }
-    # import pdb; pdb.set_trace()
+    
     return render(request, 'images/album.html', context)
