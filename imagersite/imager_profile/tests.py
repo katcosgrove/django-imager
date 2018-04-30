@@ -136,7 +136,7 @@ class ProfileUnitTest(TestCase):
         self.assertTrue(one_user, None)
 
 
-class ProfileViews(TestCase):
+# class ProfileViews(TestCase):
 
     # def test_get_profile_page_status_code(self):
     #     """Test profile page view returns 302 status code."""
@@ -146,12 +146,12 @@ class ProfileViews(TestCase):
     #     response = c.get(reverse_lazy('profile'))
     #     self.assertEqual(response.status_code, 302)
 
-    def test_get_profile_page_templates(self):
-        """Test profile page view templates."""
-        c = Client()
-        response = c.get(reverse_lazy('profile'), follow=True)
-        self.assertEqual(response.templates[0].name, 'home.html')
-        self.assertEqual(response.templates[1].name, 'base.html')
+    # def test_get_profile_page_templates(self):
+    #     """Test profile page view templates."""
+    #     c = Client()
+    #     response = c.get(reverse_lazy('profile'), follow=True)
+    #     self.assertEqual(response.templates[0].name, 'home.html')
+    #     self.assertEqual(response.templates[1].name, 'base.html')
 
     # this test needs some work 
     
