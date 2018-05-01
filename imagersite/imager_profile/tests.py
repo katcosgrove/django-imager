@@ -172,3 +172,5 @@ class TestProfileViews(TestCase):
         response = self.client.get(reverse_lazy('profile'), follow=True)
         self.assertEqual(response.templates[0].name, 'profile/profile.html')
         self.assertEqual(response.templates[1].name, 'base.html')
+
+

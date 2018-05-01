@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse_lazy
 
 
-class ClientTests(TestCase):
+class ClientUnitTests(TestCase):
     """Class for existing user unit tests."""
 
     def test_user_registration_status_code(self):
