@@ -27,6 +27,15 @@ DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = []
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'python401imager@gmail.com'
+EMAIL_HOST_PASSWORD = 'ZpN4DAct'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+
 
 # Application definition
 
@@ -136,7 +145,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'MEDIA')
 
 ACCOUNT_ACTIVATION_DAYS = 1
 LOGIN_REDIRECT_URL = '/profile'
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 THUMBNAIL_DEBUG = True
