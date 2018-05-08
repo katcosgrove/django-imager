@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from .models import ImagerProfile
 from imager_images.models import Album, Photo
 from django.views.generic import TemplateView
 
