@@ -17,5 +17,5 @@ class HomeView(TemplateView):
             return context
         except IndexError:
             random_image = '/static/birdcage.jpg'
-            context['image'] = random_image.url
+            context['image'] = random_image
             return context
