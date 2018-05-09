@@ -1,44 +1,52 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import ImagerProfile
 from imager_images.models import Album, Photo
-# Create your views here.
+from django.views.generic import TemplateView
 
 
-def profile_view(request, username=None):
+class ProfileView(TemplateView):
     """
     Handle profile view for any user.
 
     If you are not the owner of the profile, display only public photos and albums.
     """
-    owner = False
 
-    if not username:
-        username = request.user.get_username()
-        owner = True
-        if username == '':
+    template_name = 'profile/profile.html'
+
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
             return redirect('home')
 
-    profile = get_object_or_404(ImagerProfile, user__username=username)
-    albums = Album.objects.filter(user__username=username)
-    photos = Photo.objects.filter(user__username=username)
-    num_photos_public = len(Photo.objects.filter(user__username=username).filter(published='PUBLIC'))
-    num_albums_public = len(Album.objects.filter(user__username=username).filter(published='PUBLIC'))
+        if kwargs:
+            return super().get(*args, **kwargs)
 
-    num_photos_private = len(Photo.objects.filter(user__username=username).filter(published='PRIVATE'))
-    num_albums_private = len(Album.objects.filter(user__username=username).filter(published='PRIVATE'))
+        else:
+            kwargs.update({'username': self.request.user.username})
+            kwargs.update({'owner': True})
 
-    if not owner:
-        photos = Photo.objects.filter(published='PUBLIC')
-        albums = Album.objects.filter(published='PUBLIC')
+        return super().get(*args, **kwargs)
 
-    context = {
-        'profile': profile,
-        'albums': albums,
-        'photos': photos,
-        'num_albums_public': num_albums_public,
-        'num_photos_public': num_photos_public,
-        'num_albums_private': num_albums_private,
-        'num_photos_private': num_photos_private,
-    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-    return render(request, 'profile/profile.html', context)
+        profile = get_object_or_404(ImagerProfile, user__username=context['username'])
+        albums = Album.objects.filter(user__username=context['username'])
+        photos = Photo.objects.filter(user__username=context['username'])
+        num_photos_public = len(Photo.objects.filter(user__username=context['username']).filter(published='PUBLIC'))
+        num_albums_public = len(Album.objects.filter(user__username=context['username']).filter(published='PUBLIC'))
+
+        num_photos_private = len(Photo.objects.filter(user__username=context['username']).filter(published='PRIVATE'))
+        num_albums_private = len(Album.objects.filter(user__username=context['username']).filter(published='PRIVATE'))
+
+        if context['username'] != self.request.user.username:
+            photos = photos.filter(published='PUBLIC')
+            albums = albums.filter(published='PUBLIC')
+
+        context['profile'] = profile
+        context['albums'] = albums
+        context['photos'] = photos
+        context['num_albums_public'] = num_albums_public
+        context['num_photos_public'] = num_photos_public
+        context['num_albums_private'] = num_albums_private
+        context['num_photos_private'] = num_photos_private
+        return context

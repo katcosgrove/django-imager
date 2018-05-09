@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% load thumbnail %}
 {%  block content %}
+<a href="{% url "photo_create" %}"><h2 style="color: white;">Add a Photo</h2></a>
+<a href="{% url "album_create" %}"><h2 style="color: white;">Add an Album</h2></a>
 <h2 class="albums header">Albums</h2>
 <div class="gridContainer">
 {% for album in albums %}
 <div class="gridItem">
 {% thumbnail album.cover.image "200x200" as im %}
-<a href="{% url "album" album_id=album.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
+<a href="{% url "album" pk=album.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
 {% endthumbnail %}
 </div>
 {% endfor %}
@@ -17,7 +19,7 @@
 {% for photo in photos %}
 <div class="gridItem">
 {% thumbnail photo.image "200x200" as im %}
-    <a href="{% url "photo" photo_id=photo.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
+    <a href="{% url "photo" pk=photo.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
 {% endthumbnail %}
 </div>
 {% endfor %}
