@@ -10,7 +10,7 @@ class PhotoCreateView(CreateView):
     template_name = 'images/photo_create.html'
     model = Photo
     form_class = PhotoForm
-    success_url = '/images/photos'
+    success_url = '/images/library'
 
     def get(self, *args, **kwargs):
         """On get request, redirect home if user is not authenticated."""
@@ -44,7 +44,7 @@ class AlbumCreateView(CreateView):
     template_name = 'images/album_create.html'
     model = Album
     form_class = AlbumForm
-    success_url = '/images/albums'
+    success_url = '/images/library'
 
     def get(self, *args, **kwargs):
         """On get request, redirect home if user is not authenticated."""

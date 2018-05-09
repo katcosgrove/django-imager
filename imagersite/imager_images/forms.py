@@ -12,7 +12,7 @@ class PhotoForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         """Init for class."""
-        username = kwargs.pop('username')
+        kwargs.pop('username')
         super().__init__(*args, **kwargs)
 
 
