@@ -8,7 +8,7 @@
 {% for photo in album.photos.all %}
 <div class="gridItem">
 {% thumbnail photo.image "200x200" as im %}
-    <a href="{% url "photo" photo_id=photo.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
+    <a href="{% url "photo" pk=photo.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
 {% endthumbnail %}
 </div>
 {% endfor %}

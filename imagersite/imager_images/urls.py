@@ -1,12 +1,13 @@
 from django.urls import path
-from .views import library_view, PhotosView, AlbumsView, PhotoView, album_view, PhotoCreateView
+from .views import LibraryView, PhotosView, AlbumsView, PhotoView, AlbumView, PhotoCreateView, AlbumCreateView
 
 
 urlpatterns = [
-    path('library/', library_view, name='library'),
+    path('library/', LibraryView.as_view(), name='library'),
     path('photos/', PhotosView.as_view(), name='photos'),
     path('photos/<int:pk>', PhotoView.as_view(), name='photo'),
     path('albums/', AlbumsView.as_view(), name='albums'),
-    path('albums/<int:album_id>', album_view, name='album'),
-    path('photos/add', PhotoCreateView.as_view(), name='photo_create')
+    path('albums/<int:pk>', AlbumView.as_view(), name='album'),
+    path('photos/add', PhotoCreateView.as_view(), name='photo_create'),
+    path('albums/add', AlbumCreateView.as_view(), name='album_create')
 ]

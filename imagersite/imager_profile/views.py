@@ -16,18 +16,18 @@ class ProfileView(TemplateView):
     def get(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
             return redirect('home')
-        
-        kwargs.update({'username': self.request.user.username})
+
+        if kwargs:
+            return super().get(*args, **kwargs)
+
+        else:
+            kwargs.update({'username': self.request.user.username})
+            kwargs.update({'owner': True})
 
         return super().get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        owner = False
-
-        if not context['username']:
-            context['username'] = request.user.get_username()
-            owner = True
 
         profile = get_object_or_404(ImagerProfile, user__username=context['username'])
         albums = Album.objects.filter(user__username=context['username'])
@@ -38,9 +38,9 @@ class ProfileView(TemplateView):
         num_photos_private = len(Photo.objects.filter(user__username=context['username']).filter(published='PRIVATE'))
         num_albums_private = len(Album.objects.filter(user__username=context['username']).filter(published='PRIVATE'))
 
-        if not owner:
-            photos = Photo.objects.filter(published='PUBLIC')
-            albums = Album.objects.filter(published='PUBLIC')
+        if context['username'] != self.request.user.username:
+            photos = photos.filter(published='PUBLIC')
+            albums = albums.filter(published='PUBLIC')
 
         context['profile'] = profile
         context['albums'] = albums

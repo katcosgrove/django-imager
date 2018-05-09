@@ -6,22 +6,24 @@ class PhotoForm(ModelForm):
     """Class for photo form."""
 
     class Meta:
+        """Metadata for class."""
         model = Photo
         fields = ['image', 'title', 'description', 'published']
 
     def __init__(self, *args, **kwargs):
+        """Init for class."""
         username = kwargs.pop('username')
         super().__init__(*args, **kwargs)
 
 
-# class AlbumForm(ModelForm):
-#     """Class for album form."""
+class AlbumForm(ModelForm):
+    """Class for album form."""
 
-#     class Meta:
-#         model = Photo
-#         fields = ['cover', 'photos', 'title', 'description', 'published']
+    class Meta:
+        model = Album
+        fields = ['cover', 'photos', 'title', 'description', 'published']
 
-#     def __init__(self, *args, **kwargs):
-#         username = kwargs.pop('username')
-#         super().__init__(*args, **kwargs)
-#         self.fields['cover'].queryset = Album.objects.filter(album__user__username =username)
+    def __init__(self, *args, **kwargs):
+        username = kwargs.pop('username')
+        super().__init__(*args, **kwargs)
+        self.fields['cover'].queryset = Photo.objects.filter(user__username =username)
