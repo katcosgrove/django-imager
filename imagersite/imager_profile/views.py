@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404
 from .models import ImagerProfile
+from .forms import ProfileEditForm
 from imager_images.models import Album, Photo
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 
 
-class ProfileView(TemplateView):
+class ProfileView(LoginRequiredMixin, TemplateView):
     """
     Handle profile view for any user.
 
@@ -12,21 +15,21 @@ class ProfileView(TemplateView):
     """
 
     template_name = 'profile/profile.html'
+    login_url = reverse_lazy('auth_login')
 
     def get(self, *args, **kwargs):
-        if not self.request.user.is_authenticated:
-            return redirect('home')
-
+        """Get username."""
         if kwargs:
             return super().get(*args, **kwargs)
 
         else:
             kwargs.update({'username': self.request.user.username})
-            kwargs.update({'owner': True})
+            # kwargs.update({'owner': True})
 
         return super().get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        """Get context data for profiles."""
         context = super().get_context_data(**kwargs)
 
         profile = get_object_or_404(ImagerProfile, user__username=context['username'])
@@ -50,3 +53,39 @@ class ProfileView(TemplateView):
         context['num_albums_private'] = num_albums_private
         context['num_photos_private'] = num_photos_private
         return context
+
+
+class ProfileEditView(LoginRequiredMixin, UpdateView):
+    """Class for view to edit profile information."""
+
+    template_name = 'profile/edit_profile.html'
+    model = ImagerProfile
+    form_class = ProfileEditForm
+    login_url = reverse_lazy('auth_login')
+    success_url = reverse_lazy('profile')
+    slug_url_kwarg = 'username'
+    slug_field = 'user__username'
+
+    def get(self, *args, **kwargs):
+        """Behavior for get request on profile edit form."""
+        self.kwargs['username'] = self.request.user.get_username()
+        return super().post(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        """Behavior for post request on profile edit form."""
+        self.kwargs['username'] = self.request.user.get_username()
+        return super().post(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        """Get kwargs from edit form."""
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'username': self.request.user.get_username()})
+        return kwargs
+
+    def form_valid(self, form):
+        """Validate form data."""
+        form.instance.user.email = form.data['email']
+        form.instance.user.email = form.data['first_name']
+        form.instance.user.email = form.data['last_name']
+        form.instance.user.save()
+        return super().form_valid(form)
