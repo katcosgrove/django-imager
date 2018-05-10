@@ -12,6 +12,7 @@ omit =
     */tests.py
     */manage.py
     */wsgi.py
+    */production.py
 
 source =
     imagersite
