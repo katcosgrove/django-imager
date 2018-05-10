@@ -194,6 +194,11 @@ class TestImagesViews(TestCase):
         self.client.logout()
         self.assertEqual(response.status_code, 200)
 
+    def test_302_status_on_unauthenticated_request_to_library(self):
+        """Check for 302 status code."""
+        response = self.client.get(reverse_lazy('library'))
+        self.assertEqual(response.status_code, 302)
+
     def test_get_library_page_404_status_code(self):
         """Test library page view returns 404 status code."""
         self.client.force_login(self.user)
@@ -213,6 +218,11 @@ class TestImagesViews(TestCase):
         response = self.client.get(reverse_lazy('albums'))
         self.client.logout()
         self.assertEqual(response.status_code, 200)
+
+    def test_302_status_on_unauthenticated_request_to_albums(self):
+        """Check for 302 status code."""
+        response = self.client.get(reverse_lazy('albums'))
+        self.assertEqual(response.status_code, 302)
 
     def test_get_albums_page_404_status_code(self):
         """Test library page view returns 404 status code."""
@@ -234,6 +244,11 @@ class TestImagesViews(TestCase):
         self.client.logout()
         self.assertEqual(response.status_code, 200)
 
+    def test_302_status_on_unauthenticated_request_to_photos(self):
+        """Check for 302 status code."""
+        response = self.client.get(reverse_lazy('photos'))
+        self.assertEqual(response.status_code, 302)
+
     def test_get_photos_page_404_status_code(self):
         """Test library page view returns 404 status code."""
         self.client.force_login(self.user)
@@ -253,6 +268,11 @@ class TestImagesViews(TestCase):
         response = self.client.get('/images/photos/{}'.format(self.photo.id))
         self.client.logout()
         self.assertEqual(response.status_code, 200)
+
+    def test_302_status_on_unauthenticated_request_to_image(self):
+        """Test 200 status code on authenticated request to single image."""
+        response = self.client.get('/images/photos/{}'.format(self.photo.id))
+        self.assertEqual(response.status_code, 302)
 
     def test_404_status_on_bad_request_to_product(self):
         """Test bad photo page view returns 404 status code."""

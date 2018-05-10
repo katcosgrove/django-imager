@@ -20,7 +20,7 @@
         {% if profile.user.username == user.username %}
         <p>You have {{ num_albums_public }} public albums and {{ num_albums_private }} private albums.</p>
         <p>You have {{ num_photos_public }} public photos and {{ num_photos_private }} private photos.</p>
-        <a href="{% url "settings" username=user.username %}" >{% trans "Edit Profile" %}</a>
+        <a style="background-color:white;" href="{% url "settings" username=user.username %}" >{% trans "Edit Profile" %}</a>
         {% endif %}
     </section>
     <h2 class="albums header">Albums</h2>

@@ -160,6 +160,12 @@ class TestProfileViews(TestCase):
         self.client.logout()
         self.assertEqual(response.status_code, 200)
 
+    def test_302_status_on_unauthenticated_request_to_profile(self):
+        """Check for 302 status code."""
+        response = self.client.get(reverse_lazy('profile'))
+        self.client.logout()
+        self.assertEqual(response.status_code, 302)
+
     def test_get_profile_page_404_status_code(self):
         """Test profile page view returns 404 status code."""
         self.client.force_login(self.user)
@@ -169,8 +175,19 @@ class TestProfileViews(TestCase):
     def test_get_profile_page_templates(self):
         """Test profile page view templates."""
         self.client.force_login(self.user)
-        response = self.client.get(reverse_lazy('profile'), follow=True)
+        response = self.client.get(reverse_lazy('profile'))
         self.assertEqual(response.templates[0].name, 'profile/profile.html')
         self.assertEqual(response.templates[1].name, 'base.html')
 
+    def test_200_status_on_authenticated_request_to_user(self):
+        """Test 200 status code on authenticated request to a user."""
+        self.client.force_login(self.user)
+        # import pdb; pdb.set_trace()
+        response = self.client.get('/profile/{}'.format(self.user.username), follow=True)
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
 
+    # def test_404_status_on_bad_request_to_user(self):
+    #     """Test bad photo page view returns 404 status code."""
+    #     response = self.client.get('/profile/does_not_exist', follow=True)
+    #     self.assertEqual(response.status_code, 404)

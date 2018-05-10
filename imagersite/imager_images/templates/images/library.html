@@ -10,6 +10,7 @@
 {% thumbnail album.cover.image "200x200" as im %}
 <a href="{% url "album" pk=album.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
 {% endthumbnail %}
+<a href="{% url "album_edit" pk=album.id %}">Edit</a>
 </div>
 {% endfor %}
 </div>
@@ -21,6 +22,7 @@
 {% thumbnail photo.image "200x200" as im %}
     <a href="{% url "photo" pk=photo.id %}"><img src="{{ im.url }}" height="200px" width="200px"></a>
 {% endthumbnail %}
+<a href="{% url "photo_edit" pk=photo.id %}">Edit</a>
 </div>
 {% endfor %}
 </div>
