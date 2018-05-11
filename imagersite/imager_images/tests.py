@@ -295,3 +295,4 @@ class TestImagesViews(TestCase):
         """Test bad photo page view returns 404 status code."""
         response = self.client.get('/images/albums/does_not_exist')
         self.assertEqual(response.status_code, 404)
+

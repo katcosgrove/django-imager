@@ -1,0 +1,101 @@
+- hosts: us-west-2
+  remote_user: ubuntu
+  
+  tasks: 
+    - name: Update the base Ubuntu image
+      apt: update_cache=yes
+      become: yes
+      become_method: sudo
+
+
+    - name: Install build dependencies
+      apt: name={{ item }} state=latest update_cache=yes
+      become: yes
+      become_method: sudo
+      with_items:
+        - python-dev
+        - python3-venv
+        - python3-pip
+        - build-essential
+        - postgresql-client
+        - nginx 
+
+
+    - name: Clone the project
+      git: clone=yes repo=https://github.com/katcosgrove/django-imager.git dest=/home/ubuntu/
+
+
+    - name: Create a virtual ENV for project to run in
+      command: python3 -m venv /home/ubuntu/django-imager/ENV
+      become: yes
+      become_method: sudo
+
+
+    - name: Install Gunicorn into virtual environment
+      pip: virtualenv=/home/ubuntu/django-imager/ENV name=gunicorn
+      become: yes
+      become_method: sudo
+
+    
+    - name: Install imagersite to virtual environment
+      pip: virtualenv=/home/ubuntu/django-imager name=/home/ubuntu/django-imager/ extra_args="-e"
+      become: yes
+      become_method: sudo
+
+
+    - name: Register the backup default config for Nginx
+      stat: path=/etc/nginx/sites-available/default.bak
+      register: default_stat
+
+
+    - name: Move and rename default Nginx config
+      command: mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+      become: yes
+      become_method: sudo
+      when: not default_stat.stat.exists
+
+
+    - name: Create a new Nginx config
+      template: 
+        src: templates/nginx_config
+        dest: /etc/nginx/sites-available/default
+      become: yes
+      become_method: sudo
+
+
+    - name: Create a new Gunicorn.service config
+      template: 
+        src: templates/gunicorn.service
+        dest: /etc/systemd/system/gunicorn.service
+      become: yes
+      become_method: sudo
+
+
+    - name: Setup Nginx and Gunicorn
+      command: systemctl setup nginx gunicorn
+      become: yes
+      become_method: sudo
+
+
+    - name: Restart Nginx
+      service: name=nginx state=restarted
+      become: yes
+      become_method: sudo
+
+
+    - name: Restart Gunicorn
+      service: name=gunicorn state=restarted
+      become: yes
+      become_method: sudo
+
+    
+   
+
+# Provision instances
+# Config SSH
+# AFTER SSH TO MACHINE
+# Update / Upgrade
+# Install Build Dependencies
+# Clone project
+# Setup Nginx and Gunicorn
+# Start Nginx and Gunicorn

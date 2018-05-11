@@ -1,0 +1,21 @@
+[Unit]
+Description=gunicorn service for django imagersite application
+After=network.target
+
+[Service]
+Environment="SECRET_KEY={{ SECRET_KEY }}"
+Environment="DEBUG=False"
+Environment="DB_NAME={{ DB_NAME }}"
+Environment="DB_USER={{ DB_USER }}"
+Environment="DB_PASSWORD={{ DB_PASSWORD }}"
+Environment="DB_HOST={{ DB_HOST }}"
+Environment="ALLOWED_HOSTS={{ ALLOWED_HOSTS }}"
+Environment="DJANGO_SETTINGS_MODULE={{ DJANGO_SETTINGS_MODULE }}"
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/django-imager/imagersite/src
+ExecStart=/home/ubuntu/.local/bin/gunicorn --preload -w 3 -b 127.0.0.1:8000 imagersite.wsgi               
+
+[Install]
+WantedBy=multi-user.target
+
