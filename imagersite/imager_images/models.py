@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from sorl.thumbnail import ImageField
 from django.dispatch import receiver
-from django.details import timezone
+from django.utils import timezone
 
 
 class Photo(models.Model):

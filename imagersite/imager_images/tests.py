@@ -64,6 +64,8 @@ class PhotoAlbumUnitTest(TestCase):
     """Test Album functionality and interactivity."""
 
     @classmethod
+    @override_settings(MEDIA_ROOT=os.path.join(settings.BASE_DIR,
+                                               "test_MEDIA"))
     def setUp(self):
         """Setup user, album, and photo instances for testing"""
         super(TestCase, self)
@@ -83,11 +85,17 @@ class PhotoAlbumUnitTest(TestCase):
         album.save()
         self.album = album
 
+        os.system('mkdir {}'.format(
+            os.path.join(settings.BASE_DIR, 'test_MEDIA')
+        ))
+
     @classmethod
     def tearDown(self):
         """Destroy user and related instance."""
         User.objects.all().delete()
         Photo.objects.all().delete()
+        os.system('rm -rf {}'.format(
+            os.path.join(settings.BASE_DIR, 'test_MEDIA')))
         super(TestCase, self)
 
     def test_album_is_being_created(self):
@@ -158,6 +166,22 @@ class PhotoAlbumUnitTest(TestCase):
         self.assertIs(self.photo, one_album.photo)
         self.assertIs(self.photo, two_album.photo)
         self.assertIs(self.photo, three_album.photo)
+
+    @override_settings(MEDIA_ROOT=os.path.join(settings.BASE_DIR,
+                                               "test_MEDIA"))
+    def test_photo_edit_view_edits_photo(self):
+        """Test that photo edit view post login edits a photo."""
+        from imager_images.views import PhotoEditView
+        request = self.request.post('')
+        request.user = self.user
+        request.POST = {'title': 'test', 'description': 'testing', 'published': 'PRIVATE'}
+        image = self.photo.image
+        request._files = {'image': image}
+        view = PhotoEditView(request=request)
+        view.post(request)
+        photo = Photo.objects.get(title='test')
+        self.assertIsNotNone(photo)
+        self.assertEqual(photo.description, 'testing')
 
 
 class TestImagesViews(TestCase):
