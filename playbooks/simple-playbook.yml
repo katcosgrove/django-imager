@@ -22,7 +22,7 @@
 
 
     - name: Clone the project
-      git: clone=yes repo=https://github.com/katcosgrove/django-imager.git dest=/home/ubuntu/
+      git: clone=yes repo=https://github.com/katcosgrove/django-imager.git dest=/home/ubuntu/django-imager
 
 
     - name: Create a virtual ENV for project to run in
@@ -30,15 +30,23 @@
       become: yes
       become_method: sudo
 
-
-    - name: Install Gunicorn into virtual environment
-      pip: virtualenv=/home/ubuntu/django-imager/ENV name=gunicorn
+    
+    - name: Install imagersite requirements to virtual environment
+      pip: 
+        requirements: /home/ubuntu/django-imager/requirements.txt 
+        virtualenv: /home/ubuntu/django-imager/ENV 
       become: yes
       become_method: sudo
 
-    
-    - name: Install imagersite to virtual environment
-      pip: virtualenv=/home/ubuntu/django-imager name=/home/ubuntu/django-imager/ extra_args="-e"
+
+    # - name: Migrate database
+    #   command: python3 /home/ubuntu/django-imager/imagersite/manage.py migrate
+    #   become: yes
+    #   become_method: sudo
+
+
+    - name: Install Gunicorn into virtual environment
+      pip: virtualenv=/home/ubuntu/django-imager/ENV name=gunicorn
       become: yes
       become_method: sudo
 
@@ -46,6 +54,8 @@
     - name: Register the backup default config for Nginx
       stat: path=/etc/nginx/sites-available/default.bak
       register: default_stat
+      become: yes
+      become_method: sudo
 
 
     - name: Move and rename default Nginx config
@@ -71,14 +81,13 @@
       become_method: sudo
 
 
-    - name: Setup Nginx and Gunicorn
-      command: systemctl setup nginx gunicorn
+    - name: Setup Gunicorn
+      command: systemctl enable gunicorn
       become: yes
       become_method: sudo
 
-
-    - name: Restart Nginx
-      service: name=nginx state=restarted
+    - name: Setup Nginx
+      command: systemctl enable nginx 
       become: yes
       become_method: sudo
 
@@ -87,6 +96,19 @@
       service: name=gunicorn state=restarted
       become: yes
       become_method: sudo
+
+    # - name: Start Nginx and Gunicorn
+    #   command: systemctl start nginx gunicorn
+    #   become: yes
+    #   become_method: sudo
+
+    - name: Restart Nginx
+      service: name=nginx state=restarted
+      become: yes
+      become_method: sudo
+
+
+
 
     
    

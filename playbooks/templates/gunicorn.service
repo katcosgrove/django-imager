@@ -13,8 +13,8 @@ Environment="ALLOWED_HOSTS={{ ALLOWED_HOSTS }}"
 Environment="DJANGO_SETTINGS_MODULE={{ DJANGO_SETTINGS_MODULE }}"
 User=ubuntu
 Group=www-data
-WorkingDirectory=/home/ubuntu/django-imager/imagersite/src
-ExecStart=/home/ubuntu/.local/bin/gunicorn --preload -w 3 -b 127.0.0.1:8000 imagersite.wsgi               
+WorkingDirectory=/home/ubuntu/django-imager/imagersite
+ExecStart=/home/ubuntu/django-imager/ENV/bin/gunicorn --preload -w 3 -b 127.0.0.1:8000 imagersite.wsgi               
 
 [Install]
 WantedBy=multi-user.target
