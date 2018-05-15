@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.conf import settings
 from .models import Album, Photo
 from .forms import PhotoForm, PhotoEditForm, AlbumForm, AlbumEditForm
+from .views import PhotoCreateView, PhotoEditView, AlbumCreateView, AlbumEditView
 from imager_profile.models import User
 import factory
 import faker
@@ -195,7 +196,6 @@ class PhotoFormsTest(TestCase):
 
         super(TestCase, self)
 
-
     def test_photo_form_exists(self):
         """Make sure photo form exists."""
 
@@ -207,6 +207,7 @@ class PhotoFormsTest(TestCase):
         self.assertTrue(form['title'].data == 'test test')
         self.assertTrue(form['description'].data == 'this is only a test')
         self.assertTrue(form['published'].data == 'PUBLIC, Public')
+
 
 class AlbumFormsTest(TestCase):
     """Test Album functionality and interactivity."""
@@ -233,6 +234,7 @@ class AlbumFormsTest(TestCase):
         self.album = album
 
         self.request = RequestFactory()
+
 
     @classmethod
     def tearDown(self):
@@ -278,6 +280,8 @@ class TestImagesViews(TestCase):
         album.user_id = self.user.id
         album.save()
         self.album = album
+
+        self.request = RequestFactory()
 
     @classmethod
     def tearDown(self):
@@ -436,5 +440,28 @@ class TestImagesViews(TestCase):
         response = self.client.get('/images/photos/{}/edit'.format(self.album.id), follow=True)
         self.assertEqual(response.templates[0].name, 'registration/login.html')
         self.assertEqual(response.templates[1].name, 'base.html')
+
+    # def test_user_not_authenticated_redirected_home_on_post(self):
+    #     """Make sure a unauthenticated post request is redirected home."""
+
+    #     request = self.request.post('')
+    #     request.user = self.user
+    #     request.POST = {
+    #         'title': 'test test', 
+    #         'description': 'this is only a test', 
+    #         'published': 'PUBLIC, Public'}
+    #     image = SimpleUploadedFile(
+    #         name='sample_img.jpg',
+    #         content=b'file_content',
+    #         content_type="image/jpeg"
+    #     )
+    #     request._files = {'image': image}
+    #     view = PhotoCreateView(request=request)
+    #     view.post(request)
+    #     import pdb; pdb.set_trace()
+    #     photo = Photo.objects.get(title='test test')
+        
+    #     self.assertIsNotNone(photo)
+
     
 

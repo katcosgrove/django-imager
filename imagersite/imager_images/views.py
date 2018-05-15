@@ -15,12 +15,12 @@ class PhotoCreateView(LoginRequiredMixin, CreateView):
     success_url = '/images/library'
     login_url = reverse_lazy('auth_login')
 
-    def post(self, *args, **kwargs):
-        """On post request, redirect home if user is not authenticated."""
-        if not self.request.user.is_authenticated:
-            return redirect('home')
+    # def post(self, *args, **kwargs):
+    #     """On post request, redirect home if user is not authenticated."""
+    #     if not self.request.user.is_authenticated:
+    #         return redirect('home')
 
-        return super().post(*args, **kwargs)
+    #     return super().post(*args, **kwargs)
 
     def get_form_kwargs(self):
         """Get keyword arguments from form and add username."""
@@ -43,12 +43,12 @@ class AlbumCreateView(LoginRequiredMixin, CreateView):
     success_url = '/images/library'
     login_url = reverse_lazy('auth_login')
 
-    def post(self, *args, **kwargs):
-        """On post request, redirect home if user is not authenticated."""
-        if not self.request.user.is_authenticated:
-            return redirect('home')
+    # def post(self, *args, **kwargs):
+    #     """On post request, redirect home if user is not authenticated."""
+    #     if not self.request.user.is_authenticated:
+    #         return redirect('home')
 
-        return super().post(*args, **kwargs)
+    #     return super().post(*args, **kwargs)
 
     def get_form_kwargs(self):
         """Get keyword arguments from form and add username."""
