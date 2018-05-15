@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from .models import User
+from .forms import ProfileEditForm
 from django.urls import reverse_lazy
 import factory
 from random import choice
@@ -135,6 +136,32 @@ class ProfileUnitTest(TestCase):
         one_user.delete()
         self.assertTrue(one_user, None)
 
+    def test_user_edit_form_is_created(self):
+        """Make sure user form is created."""
+
+        one_user = User.objects.first()
+        identity = one_user.first_name
+        # import pdb; pdb.set_trace()
+
+
+        fields = ['first_name', 'last_name', 'bio', 'phone', 'location', 'website', 'fee']
+
+        form = ProfileEditForm({'first_name':'Tester',
+            'last_name': 'McTestyFace',
+            'bio': one_user.profile.bio,
+            'phone': one_user.profile.phone,
+            'location': one_user.profile.location,
+            'website': one_user.profile.website,
+            'fee': one_user.profile.fee}, username=one_user.username)
+
+        self.assertTrue(form['first_name'].data == 'Tester')
+        self.assertTrue(form['last_name'].data == 'McTestyFace')
+        self.assertTrue(form['bio'].data == one_user.profile.bio)
+        self.assertTrue(form['phone'].data == one_user.profile.phone)
+        self.assertTrue(form['location'].data == one_user.profile.location)
+        self.assertTrue(form['website'].data == one_user.profile.website)
+        self.assertTrue(form['fee'].data == one_user.profile.fee)
+
 
 class TestProfileViews(TestCase):
     """Class to test profile views."""
@@ -182,12 +209,14 @@ class TestProfileViews(TestCase):
     def test_200_status_on_authenticated_request_to_user(self):
         """Test 200 status code on authenticated request to a user."""
         self.client.force_login(self.user)
-        # import pdb; pdb.set_trace()
         response = self.client.get('/profile/{}'.format(self.user.username), follow=True)
         self.client.logout()
         self.assertEqual(response.status_code, 200)
 
-    # def test_404_status_on_bad_request_to_user(self):
-    #     """Test bad photo page view returns 404 status code."""
-    #     response = self.client.get('/profile/does_not_exist', follow=True)
-    #     self.assertEqual(response.status_code, 404)
+    def test_200_status_on_authenticated_request_to_user_settings(self):
+        """Test 200 status code on authenticated request to a user's settings page."""
+        self.client.force_login(self.user)
+        # import pdb; pdb.set_trace()
+        response = self.client.get('/profile/settings/{}'.format(self.user.username), follow=True)
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)

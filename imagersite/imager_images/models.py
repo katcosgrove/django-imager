@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from sorl.thumbnail import ImageField
+from django.dispatch import receiver
+from django.utils import timezone
 
 
 class Photo(models.Model):
@@ -50,3 +52,15 @@ class Album(models.Model):
     def __str__(self):
         """Return the title of the album."""
         return '{}'.format(self.title)
+
+
+@receiver(models.signals.post_save, sender=Photo)
+def set_photo_date_published(sender, instance, **kwargs):
+    if instance.published == 'PUBLIC' and not instance.date_published:
+        instance.date_published = timezone.now()
+
+    
+@receiver(models.signals.post_save, sender=Album)
+def set_album_date_published(sender, instance, **kwargs):
+    if instance.published == 'PUBLIC' and not instance.date_published:
+        instance.date_published = timezone.now()

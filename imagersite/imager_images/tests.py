@@ -1,10 +1,14 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings, RequestFactory
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse_lazy
+from django.conf import settings
 from .models import Album, Photo
+from .forms import PhotoForm, PhotoEditForm, AlbumForm, AlbumEditForm
+from .views import PhotoCreateView, PhotoEditView, AlbumCreateView, AlbumEditView
 from imager_profile.models import User
 import factory
 import faker
+import os
 
 
 fake = faker.Faker()
@@ -67,6 +71,7 @@ class PhotoAlbumUnitTest(TestCase):
     def setUp(self):
         """Setup user, album, and photo instances for testing"""
         super(TestCase, self)
+        
         user = User(username='testing',
                     email='testing@testing.com')
         user.save()
@@ -83,11 +88,14 @@ class PhotoAlbumUnitTest(TestCase):
         album.save()
         self.album = album
 
+        self.request = RequestFactory()
+
     @classmethod
     def tearDown(self):
         """Destroy user and related instance."""
         User.objects.all().delete()
         Photo.objects.all().delete()
+
         super(TestCase, self)
 
     def test_album_is_being_created(self):
@@ -159,6 +167,98 @@ class PhotoAlbumUnitTest(TestCase):
         self.assertIs(self.photo, two_album.photo)
         self.assertIs(self.photo, three_album.photo)
 
+class PhotoFormsTest(TestCase):
+    """Test Album functionality and interactivity."""
+
+    @classmethod
+    def setUp(self):
+        """Setup user, album, and photo instances for testing"""
+        super(TestCase, self)
+        
+        user = User(username='testing',
+                    email='testing@testing.com')
+        user.save()
+        self.user = user
+        self.client = Client()
+
+        photo = PhotoFactory.build()
+        photo.user_id = self.user.id
+        photo.save()
+        self.photo = photo
+
+        self.request = RequestFactory()
+
+    @classmethod
+    def tearDown(self):
+        """Destroy user and related instance."""
+        User.objects.all().delete()
+        Photo.objects.all().delete()
+
+        super(TestCase, self)
+
+    def test_photo_form_exists(self):
+        """Make sure photo form exists."""
+
+        form = PhotoForm({'image': self.photo,
+            'title': 'test test', 
+            'description': 'this is only a test', 
+            'published': 'PUBLIC, Public' }, username = self.user.username)
+            
+        self.assertTrue(form['title'].data == 'test test')
+        self.assertTrue(form['description'].data == 'this is only a test')
+        self.assertTrue(form['published'].data == 'PUBLIC, Public')
+
+
+class AlbumFormsTest(TestCase):
+    """Test Album functionality and interactivity."""
+
+    @classmethod
+    def setUp(self):
+        """Setup user, album, and photo instances for testing"""
+        super(TestCase, self)
+        
+        user = User(username='testing',
+                    email='testing@testing.com')
+        user.save()
+        self.user = user
+        self.client = Client()
+
+        photo = PhotoFactory.build()
+        photo.user_id = self.user.id
+        photo.save()
+        self.photo = photo
+
+        album = AlbumFactory.build()
+        album.user_id = self.user.id
+        album.save()
+        self.album = album
+
+        self.request = RequestFactory()
+
+
+    @classmethod
+    def tearDown(self):
+        """Destroy user and related instance."""
+        User.objects.all().delete()
+        Photo.objects.all().delete()
+
+        super(TestCase, self)
+
+    def test_album_form_exists(self):
+        """Make sure album form exists."""
+
+        form = AlbumForm({'cover': self.photo,
+            'photos': self.photo, 
+            'title': 'test test', 
+            'description': 'this is only a test', 
+            'published': 'PUBLIC, Public'}, username = self.user.username)
+            
+        # import pdb; pdb.set_trace()
+        self.assertTrue(form['title'].data == 'test test')
+        self.assertTrue(form['description'].data == 'this is only a test')
+        self.assertTrue(form['published'].data == 'PUBLIC, Public')
+
+
 
 class TestImagesViews(TestCase):
     """Class to test image views."""
@@ -180,6 +280,8 @@ class TestImagesViews(TestCase):
         album.user_id = self.user.id
         album.save()
         self.album = album
+
+        self.request = RequestFactory()
 
     @classmethod
     def tearDown(self):
@@ -274,20 +376,45 @@ class TestImagesViews(TestCase):
         response = self.client.get('/images/photos/{}'.format(self.photo.id))
         self.assertEqual(response.status_code, 302)
 
-    def test_404_status_on_bad_request_to_product(self):
+    def test_404_status_on_bad_request_to_image(self):
         """Test bad photo page view returns 404 status code."""
         response = self.client.get('/images/photos/does_not_exist')
         self.assertEqual(response.status_code, 404)
 
+    def test_get_photo_edit_page_templates(self):
+        """Test library page view templates."""
+        self.client.force_login(self.user)
+        response = self.client.get('/images/photos/{}/edit'.format(self.photo.id))
+        self.assertEqual(response.templates[0].name, 'images/photo_edit.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
+
+    def test_200_status_on_authenticated_request_to_edit_image(self):
+        """Test 200 status code on authenticated request to edit album page."""
+        self.client.force_login(self.user)
+        response = self.client.get('/images/photos/{}/edit'.format(self.photo.id))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+
+    def test_302_status_on_unauthenticated_request_to_edit_image(self):
+        """Test 302 status code on unauthenticated request to edit album page."""
+        response = self.client.get('/images/photos/{}/edit'.format(self.photo.id))
+        self.assertEqual(response.status_code, 302)
+
+    def test_unauth_user_redirected_to_login_on_photo_edit_page(self):
+        """Test unauthorized user is redirected to login page."""
+        response = self.client.get('/images/photos/{}/edit'.format(self.photo.id), follow=True)
+        self.assertEqual(response.templates[0].name, 'registration/login.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
+
     def test_200_status_on_authenticated_request_to_album(self):
-        """Test 200 status code on authenticated request to single image."""
+        """Test 200 status code on authenticated request to single album."""
         self.client.force_login(self.user)
         response = self.client.get('/images/albums/{}'.format(self.album.id))
         self.client.logout()
         self.assertEqual(response.status_code, 200)
 
     def test_302_status_on_unauthenticated_request_to_album(self):
-        """Test 200 status code on unauthenticated request to single image."""
+        """Test 302 status code on unauthenticated request to single album."""
         response = self.client.get('/images/albums/{}'.format(self.album.id))
         self.assertEqual(response.status_code, 302)
 
@@ -295,3 +422,46 @@ class TestImagesViews(TestCase):
         """Test bad photo page view returns 404 status code."""
         response = self.client.get('/images/albums/does_not_exist')
         self.assertEqual(response.status_code, 404)
+
+    def test_200_status_on_authenticated_request_to_edit_album(self):
+        """Test 200 status code on authenticated request to edit album page."""
+        self.client.force_login(self.user)
+        response = self.client.get('/images/albums/{}/edit'.format(self.album.id))
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+
+    def test_302_status_on_unauthenticated_request_to_edit_album(self):
+        """Test 302 status code on unauthenticated request to edit album page."""
+        response = self.client.get('/images/albums/{}/edit'.format(self.album.id))
+        self.assertEqual(response.status_code, 302)
+
+    def test_unauth_user_redirected_to_login_on_photo_edit_page(self):
+        """Test unauthorized user is redirected to login page."""
+        response = self.client.get('/images/photos/{}/edit'.format(self.album.id), follow=True)
+        self.assertEqual(response.templates[0].name, 'registration/login.html')
+        self.assertEqual(response.templates[1].name, 'base.html')
+
+    # def test_user_not_authenticated_redirected_home_on_post(self):
+    #     """Make sure a unauthenticated post request is redirected home."""
+
+    #     request = self.request.post('')
+    #     request.user = self.user
+    #     request.POST = {
+    #         'title': 'test test', 
+    #         'description': 'this is only a test', 
+    #         'published': 'PUBLIC, Public'}
+    #     image = SimpleUploadedFile(
+    #         name='sample_img.jpg',
+    #         content=b'file_content',
+    #         content_type="image/jpeg"
+    #     )
+    #     request._files = {'image': image}
+    #     view = PhotoCreateView(request=request)
+    #     view.post(request)
+    #     import pdb; pdb.set_trace()
+    #     photo = Photo.objects.get(title='test test')
+        
+    #     self.assertIsNotNone(photo)
+
+    
+
