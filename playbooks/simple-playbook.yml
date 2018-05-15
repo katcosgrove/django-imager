@@ -39,12 +39,6 @@
       become_method: sudo
 
 
-    # - name: Migrate database
-    #   command: python3 /home/ubuntu/django-imager/imagersite/manage.py migrate
-    #   become: yes
-    #   become_method: sudo
-
-
     - name: Install Gunicorn into virtual environment
       pip: virtualenv=/home/ubuntu/django-imager/ENV name=gunicorn
       become: yes
@@ -97,10 +91,6 @@
       become: yes
       become_method: sudo
 
-    # - name: Start Nginx and Gunicorn
-    #   command: systemctl start nginx gunicorn
-    #   become: yes
-    #   become_method: sudo
 
     - name: Restart Nginx
       service: name=nginx state=restarted
@@ -108,16 +98,3 @@
       become_method: sudo
 
 
-
-
-    
-   
-
-# Provision instances
-# Config SSH
-# AFTER SSH TO MACHINE
-# Update / Upgrade
-# Install Build Dependencies
-# Clone project
-# Setup Nginx and Gunicorn
-# Start Nginx and Gunicorn
