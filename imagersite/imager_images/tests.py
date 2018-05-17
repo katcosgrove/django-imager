@@ -435,33 +435,8 @@ class TestImagesViews(TestCase):
         response = self.client.get('/images/albums/{}/edit'.format(self.album.id))
         self.assertEqual(response.status_code, 302)
 
-    def test_unauth_user_redirected_to_login_on_photo_edit_page(self):
+    def test_unauth_user_redirected_to_login_on_album_edit_page(self):
         """Test unauthorized user is redirected to login page."""
-        response = self.client.get('/images/photos/{}/edit'.format(self.album.id), follow=True)
+        response = self.client.get('/images/albums/{}/edit'.format(self.album.id), follow=True)
         self.assertEqual(response.templates[0].name, 'registration/login.html')
         self.assertEqual(response.templates[1].name, 'base.html')
-
-    # def test_user_not_authenticated_redirected_home_on_post(self):
-    #     """Make sure a unauthenticated post request is redirected home."""
-
-    #     request = self.request.post('')
-    #     request.user = self.user
-    #     request.POST = {
-    #         'title': 'test test', 
-    #         'description': 'this is only a test', 
-    #         'published': 'PUBLIC, Public'}
-    #     image = SimpleUploadedFile(
-    #         name='sample_img.jpg',
-    #         content=b'file_content',
-    #         content_type="image/jpeg"
-    #     )
-    #     request._files = {'image': image}
-    #     view = PhotoCreateView(request=request)
-    #     view.post(request)
-    #     import pdb; pdb.set_trace()
-    #     photo = Photo.objects.get(title='test test')
-        
-    #     self.assertIsNotNone(photo)
-
-    
-
